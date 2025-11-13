@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="ISO-8859-1">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      background:#f7f9fc;
+      margin:0;
+    }
+    .container {
+      background:#fff;
+      padding:22px;
+      border-radius:10px;
+      width:360px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.06);
+    }
+    h2 { margin:0 0 14px 0; font-size:20px; color:#111; }
+    label { display:block; font-size:13px; color:#444; margin-top:10px; }
+    input[type="text"], input[type="password"], input[type="email"] {
+      width:100%;
+      padding:10px;
+      margin-top:6px;
+      border-radius:6px;
+      border:1px solid #d7dce6;
+      box-sizing:border-box;
+      font-size:14px;
+    }
+    .actions { margin-top:16px; display:flex; gap:10px; }
+    button {
+      padding:10px 12px;
+      border-radius:8px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      background:#2f80ed;
+      color:#fff;
+    }
+    .note { font-size:13px; color:#666; margin-top:10px; }
+    .error { color: #b00020; font-size:13px; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Log in</h2>
+
+    <!-- The form submits to your servlet mapping "login" -->
+    <form action="login" method="post">
+      <label for="login_id">Employee ID / Email</label>
+      <input id="login_id" name="login_id" type="text" placeholder="EID or email" required>
+
+      <label for="login_password">Password</label>
+      <input id="login_password" name="password" type="password" placeholder="Enter password" required>
+
+      <!-- Server-side error messages can be printed here via PrintWriter in the servlet -->
+      <!-- Example: <p class="error">Invalid credentials</p> -->
+      <div class="actions">
+        <button type="submit">Log In</button>
+      </div>
+      <div class="actions">
+        <button type="submit">Create account </button>
+      </div>
+
+      <div class="note">If you don't have an account, click Create Account on the main page.</div>
+    </form>
+  </div>
+</body>
+</html>
