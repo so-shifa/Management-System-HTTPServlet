@@ -1,15 +1,14 @@
 package employee_management_system;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
 
 public class CreateAccountServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html;charset=UTF-8");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
         String eid = req.getParameter("eid");
         String ename = req.getParameter("ename");
@@ -21,43 +20,44 @@ public class CreateAccountServlet extends HttpServlet {
         String password = req.getParameter("password");
         String confirm = req.getParameter("confirm_password");
 
-        PrintWriter out = resp.getWriter();
-
-        // simple validation: passwords match
-        if (password == null || !password.equals(confirm)) {
-            // include the create_account HTML so user sees the form again
-            RequestDispatcher rd = req.getRequestDispatcher("/create_account.html");
-            rd.include(req, resp);
-
-            // now inject an error message into the existing div (#server_message)
-            // we use client-side script to place HTML inside that div (this works because we included the page)
-            System.out.println("<script>");
-            System.out.println("(function(){");
-            System.out.println("var el = document.getElementById('server_message');");
-            System.out.println("if(el) {");
-            // escaping single quotes in string
-            System.out.println("el.innerHTML = '<p class=\"error\">Passwords do not match. Please re-enter.</p>';");
-            System.out.println("} else {");
-            System.out.println("document.body.insertAdjacentHTML('beforeend', '<p class=\"error\">Passwords do not match. Please re-enter.</p>');");
-            System.out.println("}");
-            System.out.println("})();");
-            System.out.println("</script>");
-
-            // close writer (container usually handles it but good practice)
-            out.close();
+        if (!password.equals(confirm)) {
+            resp.getWriter().println("Passwords do not match");
             return;
         }
 
-        // If passwords match: proceed to store user in DB (pseudo)
-        // validate other fields, check primary key uniqueness, insert into DB...
-        // For now, redirect to login page or show success message:
-        resp.sendRedirect("login.html"); // or forward to a success JSP
-    }
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/employee_db", "root", "tiger"
+            );
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // show the create form if someone GETs /create_acc
-        RequestDispatcher rd = req.getRequestDispatcher("/create_account.html");
-        rd.forward(req, resp);
-    }
+            PreparedStatement ps = con.prepareStatement(
+                "INSERT INTO employees (eid, ename, esal, designation, location, contact, email, password_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())"
+            );
+
+            ps.setString(1, eid);
+            ps.setString(2, ename);
+            ps.setString(3, esal);
+            ps.setString(4, designation);
+            ps.setString(5, location);
+            ps.setString(6, contact);
+            ps.setString(7, email);
+            ps.setString(8, password);
+
+            ps.executeUpdate();
+
+            con.close();
+
+            resp.sendRedirect("login.html");
+
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            resp.setContentType("text/plain");
+            resp.getWriter().println("Error creating account: " + e.toString());
+            for (StackTraceElement s : e.getStackTrace()) resp.getWriter().println(s.toString());
+        }
+}
+    
+    
+    
 }

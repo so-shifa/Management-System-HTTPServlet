@@ -5,35 +5,53 @@
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
   <display-name>employee_management_system</display-name>
-
-  <!-- Landing servlet (serves as router or initial servlet) -->
-  <servlet>
-    <servlet-name>LandingServlet</servlet-name>
-    <servlet-class>com.example.ems.LandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>LandingServlet</servlet-name>
-    <url-pattern>/landing</url-pattern>
-  </servlet-mapping>
-<!-- 
-  Create account servlet
-  <servlet>
+<servlet>
     <servlet-name>CreateAccountServlet</servlet-name>
-    <servlet-class>com.example.ems.CreateAccountServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
+    <servlet-class>employee_management_system.CreateAccountServlet</servlet-class>
+</servlet>
+<servlet-mapping>
     <servlet-name>CreateAccountServlet</servlet-name>
     <url-pattern>/create_acc</url-pattern>
-  </servlet-mapping>
+</servlet-mapping>
 
-  Login servlet
-  <servlet>
+<servlet>
     <servlet-name>LoginServlet</servlet-name>
-    <servlet-class>com.example.ems.LoginServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
+    <servlet-class>employee_management_system.LoginServlet</servlet-class>
+</servlet>
+<servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
     <url-pattern>/login</url-pattern>
-  </servlet-mapping> -->
+</servlet-mapping>
+
+
+<servlet>
+  <servlet-name>ProfileServlet</servlet-name>
+  <servlet-class>employee_management_system.ProfileServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>ProfileServlet</servlet-name>
+  <url-pattern>/profile</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>DeleteServlet</servlet-name>
+  <servlet-class>employee_management_system.DeleteServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>DeleteServlet</servlet-name>
+  <url-pattern>/delete</url-pattern>
+</servlet-mapping>
+
+<!-- optional: update servlet mapping if you implement update later -->
+<servlet>
+  <servlet-name>UpdateServlet</servlet-name>
+  <servlet-class>com.example.ems.UpdateServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>UpdateServlet</servlet-name>
+  <url-pattern>/update</url-pattern>
+</servlet-mapping>
+
+
 
 </web-app>

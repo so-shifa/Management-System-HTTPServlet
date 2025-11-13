@@ -1,49 +1,48 @@
 package employee_management_system;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.io.IOException;
+import java.sql.*;
 
 public class LoginServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         String loginId = req.getParameter("login_id");
         String password = req.getParameter("password");
 
-        // Dummy check - replace with DB check
-        boolean valid = "test@example.com".equals(loginId) && "secret".equals(password);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/employee_db", "root", "tiger"
+            );
 
-        if (!valid) {
-            resp.setContentType("text/html;charset=UTF-8");
-            PrintWriter out = resp.getWriter();
-            // include the login page then add a red error message
-            RequestDispatcher rd = req.getRequestDispatcher("/login.html");
-            rd.include(req, resp);
+            PreparedStatement ps = con.prepareStatement(
+                "SELECT eid, ename FROM employees WHERE email = ? AND password_hash = ?"
+            );
 
-            out.println("<script>");
-            out.println("  (function(){");
-            out.println("    var wrap = document.querySelector('.container');");
-            out.println("    var node = document.createElement('p');");
-            out.println("    node.className = 'error';");
-            out.println("    node.textContent = 'Invalid credentials. Try again.';");
-            out.println("    if(wrap) wrap.insertBefore(node, wrap.firstChild);");
-            out.println("  })();");
-            out.println("</script>");
-            out.close();
-            return;
+            ps.setString(1, loginId);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                HttpSession session = req.getSession();
+                session.setAttribute("eid", rs.getString("eid"));
+                session.setAttribute("ename", rs.getString("ename"));
+                session.setAttribute("email", loginId);
+                resp.sendRedirect("profile");
+            } else {
+                resp.getWriter().println("Invalid email or password");
+            }
+
+            con.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.getWriter().println("Login failed: " + e.toString());
         }
-
-        // On successful login, forward to home page (could be JSP)
-        req.setAttribute("user", loginId);
-        RequestDispatcher rd = req.getRequestDispatcher("/home.html"); // or /home.jsp
-        rd.forward(req, resp);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // show login form on GET
-        RequestDispatcher rd = req.getRequestDispatcher("/login.html");
-        rd.forward(req, resp);
     }
 }
